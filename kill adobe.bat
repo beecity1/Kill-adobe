@@ -1,27 +1,23 @@
 @echo off
-taskkill /F /IM "Adobe Desktop Service.exe"
-taskkill /F /IM "CCLibrary.exe"
-taskkill /F /IM "CCXProcess.exe"
-taskkill /F /IM "acrotray.exe"
-taskkill /F /IM "AdobeIPCBroker.exe"
-taskkill /F /IM "CoreSync.exe"
-taskkill /F /IM "Creative Cloud Helper.exe"
-taskkill /F /IM "AdobeNotificationClient.exe"
-taskkill /F /IM "AcrobatNotificationClient.exe"
-taskkill /F /IM "AdobeARM.exe"
+setlocal enableextensions
 
-sc stop AGSService
-sc stop AdobeUpdateService
-sc stop AGMService
-sc stop AdobeARMservice
+REM Define directories to operate on
+set "dirs=C:\ProgramData\Adobe;C:\Program Files\Adobe;C:\Program Files\Common Files\Adobe;C:\Program Files (x86)\Adobe;C:\Program Files (x86)\Common Files;C:\Users\user\AppData\Local\Adobe"
 
-echo .
-echo .
-echo make sure to launch as administrator to disable services
-echo .
-echo .
-sc config AGSService start= disabled
-sc config AdobeUpdateService start= disabled
-sc config AGMService start= disabled
-sc config AdobeARMservice start= disabled
-PAUSE
+REM Loop through each directory
+for %%d in (%dirs%) do (
+    if exist "%%d\" (
+        pushd "%%d"
+        echo Processing directory: %%d
+        for /R %%a in (*.exe) do (
+            echo Adding firewall rule for %%a
+            netsh advfirewall firewall add rule name="Blocked with Batchfile %%a" dir=out program="%%a" action=block
+        )
+        popd
+    ) else (
+        echo Directory does not exist: %%d
+    )
+)
+
+echo Done processing all directories.
+endlocal
