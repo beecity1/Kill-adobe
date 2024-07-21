@@ -1,1 +1,1 @@
-Simple BAT file which disables access to the internet for specific adobe exe files with a firewall rule in 5 seperate directories designed to target 
+Simple BAT file which disables access to the internet with a firewall rule for 5 specific adobe exe folder locations
